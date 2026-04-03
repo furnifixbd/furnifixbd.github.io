@@ -1,0 +1,85 @@
+The code is all done. Now here's exactly what to do in Google Sheets to connect it:
+
+Step 1 — Open your Google Sheet, then go to Extensions → Apps Script
+
+Step 2 — Delete anything in the editor and paste this code:
+
+function doGet(e) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const p = e.parameter;
+  sheet.appendRow([
+    p.date,
+    p.time,
+    p.name,
+    p.phone,
+    p.furniture,
+    p.message
+  ]);
+  return ContentService
+    .createTextOutput(JSON.stringify({ status: 'ok' }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+
+Step 2.5 Code for Google Sheet & Telegram ( if there is anything first clear in app script then paste this)
+
+var BOT_TOKEN = '8458292101:AAHuQVMiYEMlEQnr1C_x6UK6p5c1_dNVwIo';
+var CHAT_ID   = '7572820362'; // অবশ্যই আপনার সঠিক আইডি বসাবেন
+
+function doGet(e) {
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var p = e.parameter;
+
+    // ১. গুগল শিটে ডাটা যোগ করা
+    sheet.appendRow([p.date, p.time, p.name, p.phone, p.furniture, p.message]);
+
+    // ২. টেলিগ্রাম মেসেজ (Markdown এর বদলে HTML ব্যবহার করা নিরাপদ)
+    var text = "<b>🛠️ New Furni Fix Inquiry!</b>\n\n" +
+               "📅 <b>Date:</b> " + (p.date || 'N/A') + " at " + (p.time || 'N/A') + "\n" +
+               "👤 <b>Name:</b> " + (p.name || 'N/A') + "\n" +
+               "📞 <b>Phone:</b> " + (p.phone || 'N/A') + "\n" +
+               "🪑 <b>Furniture:</b> " + (p.furniture || 'N/A') + "\n" +
+               "💬 <b>Message:</b> " + (p.message || 'N/A');
+
+    var url = "https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage";
+    var payload = {
+      "chat_id": CHAT_ID,
+      "text": text,
+      "parse_mode": "HTML"
+    };
+
+    var options = {
+      "method": "post",
+      "contentType": "application/json",
+      "payload": JSON.stringify(payload),
+      "muteHttpExceptions": true // এরর ডিবাগ করার জন্য
+    };
+
+    UrlFetchApp.fetch(url, options);
+
+    return ContentService.createTextOutput(JSON.stringify({ status: "ok" }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ status: "error", error: err.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+
+
+Step 3 — Click Deploy → New deployment → choose "Web app"
+
+Description: Furni Fix Form
+Execute as: Me
+Who has access: Anyone
+Click Deploy and authorize it
+
+Step 4 — Copy the Web app URL (looks like https://script.google.com/macros/s/ABC.../exec)
+
+Step 5 — Open furnifix-html/script.js and replace line 13:
+
+const SHEET_URL = 'PASTE_YOUR_URL_HERE';
+
+Step 6 — Run
