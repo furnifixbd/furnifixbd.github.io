@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 — পৃষ্ঠা পাওয়া যায়নি | Furni Fix</title>
+  <link rel="icon" type="image/png" href="https://i.postimg.cc/NfFMKH6V/FAVICON.png">
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── 404 LAYOUT ── */
+    .p404-wrapper { display: flex; flex-direction: column; min-height: 100vh; }
+    .p404-main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7rem 1.5rem 4rem;
+      text-align: center;
+    }
+    .p404-inner { max-width: 720px; width: 100%; }
+
+    /* ── LABEL ── */
+    .p404-label {
+      display: inline-block;
+      font-family: 'Lato', sans-serif;
+      font-weight: 700;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    body.lang-bn .p404-label { font-family: 'Hind Siliguri', sans-serif; letter-spacing: 0.05em; }
+
+    /* ── SCENE ── */
+    .scene-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 680px;
+      margin: 0.5rem auto 0.75rem;
+    }
+    .scene-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      overflow: visible;
+    }
+
+    /* ── ANIMATIONS ── */
+
+    /* Hammer arm swings from raised → impact → raised */
+    @keyframes hammerSwing {
+      0%   { transform: rotate(-48deg); }
+      20%  { transform: rotate(-52deg); }   /* tiny windup */
+      45%  { transform: rotate(22deg);  }   /* IMPACT */
+      55%  { transform: rotate(18deg);  }   /* hold on impact */
+      75%  { transform: rotate(-48deg); }   /* raise back */
+      100% { transform: rotate(-48deg); }   /* pause at top */
+    }
+    #hammer-group {
+      animation: hammerSwing 2.2s cubic-bezier(.4,0,.2,1) infinite;
+      transform-origin: 271px 237px;
+    }
+
+    /* Cracked "0" shakes on impact */
+    @keyframes zeroShake {
+      0%, 40%, 100%  { transform: translate(0,0); }
+      43%            { transform: translate(-7px, 1px); }
+      46%            { transform: translate(6px,-1px); }
+      49%            { transform: translate(-4px, 0); }
+      52%            { transform: translate(3px,  0); }
+      55%            { transform: translate(0,    0); }
+    }
+    #zero-group {
+      animation: zeroShake 2.2s ease-in-out infinite;
+      transform-origin: 360px 180px;
+    }
+
+    /* Wood chips fly on impact */
+    @keyframes chipA {
+      0%, 41%  { opacity:0; transform: translate(0,0) rotate(0deg);   }
+      43%      { opacity:1; }
+      75%      { opacity:0; transform: translate(-38px,-42px) rotate(200deg); }
+      100%     { opacity:0; }
+    }
+    @keyframes chipB {
+      0%, 42%  { opacity:0; transform: translate(0,0) rotate(0deg);   }
+      44%      { opacity:1; }
+      76%      { opacity:0; transform: translate(-18px,-58px) rotate(280deg); }
+      100%     { opacity:0; }
+    }
+    @keyframes chipC {
+      0%, 43%  { opacity:0; transform: translate(0,0) rotate(0deg);   }
+      45%      { opacity:1; }
+      78%      { opacity:0; transform: translate(14px,-48px) rotate(-150deg);  }
+      100%     { opacity:0; }
+    }
+    @keyframes chipD {
+      0%, 44%  { opacity:0; transform: translate(0,0);   }
+      46%      { opacity:0.8; }
+      78%      { opacity:0; transform: translate(28px,-30px) rotate(90deg); }
+      100%     { opacity:0; }
+    }
+    @keyframes chipE {
+      0%, 42%  { opacity:0; transform: translate(0,0) scale(1); }
+      44%      { opacity:1; }
+      80%      { opacity:0; transform: translate(-8px,-68px) scale(0.4); }
+      100%     { opacity:0; }
+    }
+
+    /* Sparks at impact point */
+    @keyframes sparkle {
+      0%, 40%, 100% { opacity:0; transform: scale(0); }
+      44%           { opacity:1; transform: scale(1.4); }
+      54%           { opacity:0; transform: scale(0.2); }
+    }
+
+    /* Speech bubble pulse */
+    @keyframes bubbleFloat {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-5px); }
+    }
+    #speech-bubble { animation: bubbleFloat 2.8s ease-in-out infinite; }
+
+    /* Dust motes */
+    @keyframes dustFloat {
+      0%, 100% { transform: translateY(0) translateX(0); opacity: 0.5; }
+      33%      { transform: translateY(-8px) translateX(4px); opacity: 0.8; }
+      66%      { transform: translateY(-3px) translateX(-3px); opacity: 0.6; }
+    }
+    .dust { animation: dustFloat 3.5s ease-in-out infinite; }
+    .dust2 { animation: dustFloat 4.1s ease-in-out 0.7s infinite; }
+    .dust3 { animation: dustFloat 3s ease-in-out 1.2s infinite; }
+
+    /* Gentle bob on whole scene */
+    @keyframes sceneFloat {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-6px); }
+    }
+    .scene-floater { animation: sceneFloat 5s ease-in-out infinite; }
+
+    /* Chip elements */
+    #chip-a { animation: chipA 2.2s ease-out infinite; transform-origin: 308px 250px; }
+    #chip-b { animation: chipB 2.2s ease-out infinite; transform-origin: 318px 244px; }
+    #chip-c { animation: chipC 2.2s ease-out infinite; transform-origin: 325px 258px; }
+    #chip-d { animation: chipD 2.2s ease-out infinite; transform-origin: 312px 262px; }
+    #chip-e { animation: chipE 2.2s ease-out infinite; transform-origin: 320px 248px; }
+    #spark  { animation: sparkle 2.2s ease-out infinite; transform-origin: 314px 254px; }
+
+    /* ── COPY BELOW SCENE ── */
+    .p404-title {
+      font-size: clamp(1.6rem, 4.5vw, 2.2rem);
+      font-weight: 700;
+      color: var(--fg);
+      margin-bottom: 0.9rem;
+    }
+    .p404-desc {
+      font-size: 1.02rem;
+      color: var(--muted-fg);
+      line-height: 1.75;
+      max-width: 52ch;
+      margin: 0 auto 2rem;
+    }
+    .p404-actions {
+      display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;
+    }
+    .p404-btn-primary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.8rem 1.8rem; border-radius: 100px;
+      background: var(--accent); color: var(--white);
+      font-weight: 700; font-size: 0.92rem; text-decoration: none;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 14px hsla(40,70%,45%,0.3);
+    }
+    .p404-btn-primary:hover {
+      background: hsl(40,70%,38%); transform: translateY(-2px);
+      box-shadow: 0 6px 20px hsla(40,70%,45%,0.4);
+    }
+    .p404-btn-outline {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.8rem 1.8rem; border-radius: 100px;
+      border: 2px solid var(--border); color: var(--fg);
+      font-weight: 700; font-size: 0.92rem; text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .p404-btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+    @media (max-width: 480px) {
+      .p404-main { padding-top: 6rem; }
+    }
+  </style>
+</head>
+<body class="lang-bn">
+
+  <div id="progress-bar"></div>
+
+  <!-- ===== NAVBAR (identical to main) ===== -->
+  <header id="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="logo" aria-label="Furni Fix Home">
+        <img class="logo-img" src="https://i.postimg.cc/nrGzbKcF/Furni-Fix-Logo.png" alt="Furni Fix" />
+      </a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="index.html#services"     data-i18n="navServices">সেবাসমূহ</a>
+        <a href="index.html#about"        data-i18n="navAbout">আমাদের সম্পর্কে</a>
+        <a href="index.html#why-us"       data-i18n="navWhy">কেন আমরা</a>
+        <a href="index.html#testimonials" data-i18n="navTest">গ্রাহক মতামত</a>
+        <a href="index.html#faq"          data-i18n="navFaq">সচরাচর জিজ্ঞাসা</a>
+      </nav>
+      <button class="lang-toggle" id="lang-toggle" aria-label="Switch language">
+        <span class="lang-globe"></span>
+        <span class="lang-toggle-text">English</span>
+      </button>
+      <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Navigation menu">
+    <button class="mobile-close" id="mobile-close" aria-label="Close menu">&times;</button>
+    <a href="index.html#services"     class="mobile-link" data-i18n="navServices">সেবাসমূহ</a>
+    <a href="index.html#about"        class="mobile-link" data-i18n="navAbout">আমাদের সম্পর্কে</a>
+    <a href="index.html#why-us"       class="mobile-link" data-i18n="navWhy">কেন আমরা</a>
+    <a href="index.html#testimonials" class="mobile-link" data-i18n="navTest">গ্রাহক মতামত</a>
+    <a href="index.html#faq"          class="mobile-link" data-i18n="navFaq">সচরাচর জিজ্ঞাসা</a>
+    <a href="index.html#contact"      class="mobile-link" style="color:var(--accent)" data-i18n="ctaBtn">বিনামূল্যে কোটেশন</a>
+    <div class="mobile-lang-wrap">
+      <button class="lang-toggle" id="lang-toggle-mobile" aria-label="Switch language">
+        <span class="lang-globe"></span>
+        <span class="lang-toggle-text-mobile">English</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== MAIN ===== -->
+  <div class="p404-wrapper">
+    <main class="p404-main">
+      <div class="p404-inner">
+
+        <div class="p404-label" data-i18n="e404Label">মেরামত চলছে</div>
+
+        <!-- ══ SVG SCENE ══ -->
+        <div class="scene-wrap">
+          <svg class="scene-svg" viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Craftsman repairing the 404 sign">
+
+            <defs>
+              <!-- Wood grain pattern for digits -->
+              <pattern id="wood" patternUnits="userSpaceOnUse" width="60" height="60">
+                <rect width="60" height="60" fill="hsl(25,45%,25%)"/>
+                <line x1="0" y1="10" x2="60" y2="12" stroke="hsl(25,40%,20%)" stroke-width="1.5" opacity="0.4"/>
+                <line x1="0" y1="25" x2="60" y2="28" stroke="hsl(25,40%,20%)" stroke-width="1" opacity="0.3"/>
+                <line x1="0" y1="40" x2="60" y2="38" stroke="hsl(25,40%,20%)" stroke-width="2" opacity="0.25"/>
+                <line x1="0" y1="55" x2="60" y2="52" stroke="hsl(25,40%,20%)" stroke-width="1" opacity="0.35"/>
+              </pattern>
+              <!-- Crack pattern fill -->
+              <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%">
+                <feDropShadow dx="4" dy="6" stdDeviation="6" flood-color="hsla(25,45%,15%,0.25)"/>
+              </filter>
+            </defs>
+
+            <!-- ── FLOOR LINE ── -->
+            <line x1="30" y1="296" x2="670" y2="296" stroke="hsl(30,20%,80%)" stroke-width="2"/>
+            <!-- Floor shadow/rug under craftsman -->
+            <ellipse cx="240" cy="299" rx="90" ry="7" fill="hsla(25,30%,20%,0.1)"/>
+            <!-- Shadow under 0 -->
+            <ellipse cx="358" cy="299" rx="72" ry="6" fill="hsla(25,30%,20%,0.09)"/>
+
+            <!-- ── LEFT "4" ── -->
+            <g filter="url(#shadow)">
+              <text x="52" y="278"
+                font-family="'Playfair Display', Georgia, serif"
+                font-size="210" font-weight="800"
+                fill="url(#wood)" opacity="0.92">4</text>
+            </g>
+
+            <!-- ── CRACKED "0" (animated shake group) ── -->
+            <g id="zero-group" filter="url(#shadow)">
+              <!-- The "0" digit -->
+              <text x="262" y="278"
+                font-family="'Playfair Display', Georgia, serif"
+                font-size="210" font-weight="800"
+                fill="url(#wood)" opacity="0.88">0</text>
+
+              <!-- Crack lines over the "0" -->
+              <!-- Main lightning crack -->
+              <polyline
+                points="338,108  352,148  330,185  348,232  340,278"
+                fill="none" stroke="hsl(25,35%,55%)" stroke-width="3.5"
+                stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>
+              <!-- Branch crack left -->
+              <polyline
+                points="337,158  316,178  308,200"
+                fill="none" stroke="hsl(25,35%,55%)" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+              <!-- Branch crack right -->
+              <polyline
+                points="345,195  368,210  375,228"
+                fill="none" stroke="hsl(25,35%,55%)" stroke-width="1.8"
+                stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+              <!-- Tiny hairline -->
+              <line x1="325" y1="128" x2="315" y2="148"
+                stroke="hsl(25,30%,60%)" stroke-width="1.2" opacity="0.5"/>
+            </g>
+
+            <!-- ── RIGHT "4" ── -->
+            <g filter="url(#shadow)">
+              <text x="478" y="278"
+                font-family="'Playfair Display', Georgia, serif"
+                font-size="210" font-weight="800"
+                fill="url(#wood)" opacity="0.92">4</text>
+            </g>
+
+            <!-- ══ CRAFTSMAN ══ -->
+            <g class="scene-floater">
+
+              <!-- ── TOOLBOX (left, on ground) ── -->
+              <g>
+                <!-- Box body -->
+                <rect x="68" y="258" width="58" height="34" rx="5" fill="hsl(25,45%,22%)" stroke="hsl(25,40%,16%)" stroke-width="1.5"/>
+                <!-- Box lid/rim -->
+                <rect x="68" y="252" width="58" height="12" rx="4" fill="hsl(25,50%,30%)" stroke="hsl(25,40%,20%)" stroke-width="1.5"/>
+                <!-- Handle on lid -->
+                <path d="M 88 253 Q 97 245 107 253" fill="none" stroke="hsl(40,60%,40%)" stroke-width="3.5" stroke-linecap="round"/>
+                <!-- Latch -->
+                <rect x="93" y="258" width="11" height="7" rx="2" fill="hsl(40,70%,45%)"/>
+                <!-- Tools sticking up from box -->
+                <!-- Screwdriver handle -->
+                <rect x="77" y="242" width="7" height="16" rx="3" fill="hsl(15,60%,40%)"/>
+                <rect x="79" y="236" width="3" height="10" rx="1" fill="hsl(0,0%,55%)"/>
+                <!-- Wrench -->
+                <rect x="91" y="239" width="5" height="16" rx="2" fill="hsl(200,10%,45%)"/>
+                <path d="M 89 239 Q 91 234 96 238" fill="hsl(200,10%,40%)" stroke="hsl(200,10%,35%)" stroke-width="1"/>
+                <!-- Chisel -->
+                <rect x="102" y="241" width="5" height="14" rx="2" fill="hsl(30,50%,35%)"/>
+                <polygon points="102,241 107,241 104.5,235" fill="hsl(0,0%,50%)"/>
+              </g>
+
+              <!-- ── CRAFTSMAN FIGURE ── -->
+
+              <!-- LEGS (kneeling) -->
+              <!-- Left leg -->
+              <path d="M 215 263 Q 210 278 200 284" stroke="hsl(220,25%,28%)" stroke-width="18" stroke-linecap="round" fill="none"/>
+              <!-- Right leg -->
+              <path d="M 245 263 Q 250 278 262 284" stroke="hsl(220,25%,28%)" stroke-width="18" stroke-linecap="round" fill="none"/>
+              <!-- Left shoe -->
+              <ellipse cx="196" cy="286" rx="16" ry="7" fill="hsl(25,20%,18%)" transform="rotate(-8, 196, 286)"/>
+              <!-- Right shoe -->
+              <ellipse cx="265" cy="286" rx="16" ry="7" fill="hsl(25,20%,18%)" transform="rotate(8, 265, 286)"/>
+
+              <!-- BODY (overalls) -->
+              <rect x="200" y="224" width="72" height="48" rx="8" fill="hsl(220,30%,30%)"/>
+              <!-- Overalls bib / chest -->
+              <rect x="213" y="224" width="46" height="26" rx="5" fill="hsl(220,35%,38%)"/>
+              <!-- Chest pocket -->
+              <rect x="220" y="230" width="14" height="11" rx="2.5" fill="hsl(220,40%,44%)"/>
+              <!-- Belt buckle -->
+              <rect x="226" y="250" width="20" height="8" rx="2" fill="hsl(40,60%,42%)"/>
+
+              <!-- LEFT ARM (static — bracing on the cracked 0) -->
+              <path d="M 202 238 Q 180 250 168 268" stroke="hsl(220,30%,30%)" stroke-width="16" stroke-linecap="round" fill="none"/>
+              <!-- Left hand (skin) -->
+              <circle cx="165" cy="270" r="9" fill="hsl(25,55%,65%)"/>
+              <!-- Fingers hint -->
+              <path d="M 158 268 Q 162 263 167 266" stroke="hsl(25,50%,58%)" stroke-width="3" stroke-linecap="round" fill="none"/>
+
+              <!-- RIGHT ARM + HAMMER (animated) -->
+              <g id="hammer-group">
+                <!-- Upper arm -->
+                <line x1="271" y1="237" x2="294" y2="212" stroke="hsl(220,30%,30%)" stroke-width="17" stroke-linecap="round"/>
+                <!-- Forearm (skin) -->
+                <line x1="294" y1="212" x2="316" y2="188" stroke="hsl(25,55%,65%)" stroke-width="13" stroke-linecap="round"/>
+                <!-- Glove / hand -->
+                <circle cx="318" cy="185" r="9" fill="hsl(25,50%,58%)"/>
+                <!-- Hammer handle -->
+                <line x1="316" y1="183" x2="338" y2="155" stroke="hsl(25,50%,32%)" stroke-width="6" stroke-linecap="round"/>
+                <!-- Hammer head -->
+                <rect x="328" y="136" width="28" height="18" rx="4"
+                  fill="hsl(0,0%,28%)" transform="rotate(-38, 342, 145)"/>
+                <!-- Hammer face highlight -->
+                <rect x="332" y="139" width="10" height="14" rx="2"
+                  fill="hsl(0,0%,38%)" transform="rotate(-38, 337, 146)"/>
+              </g>
+
+              <!-- NECK -->
+              <rect x="224" y="210" width="16" height="16" rx="4" fill="hsl(25,55%,65%)"/>
+
+              <!-- HEAD -->
+              <circle cx="232" cy="197" r="26" fill="hsl(25,55%,65%)"/>
+
+              <!-- FACE -->
+              <!-- Eyes (concentrating) -->
+              <ellipse cx="224" cy="194" rx="4" ry="4.5" fill="hsl(25,20%,15%)"/>
+              <ellipse cx="240" cy="194" rx="4" ry="4.5" fill="hsl(25,20%,15%)"/>
+              <!-- Eye whites highlight -->
+              <circle cx="225" cy="193" r="1.5" fill="white"/>
+              <circle cx="241" cy="193" r="1.5" fill="white"/>
+              <!-- Brow (furrowed / focused) -->
+              <path d="M 219 187 Q 224 184 229 186" fill="none" stroke="hsl(25,30%,25%)" stroke-width="2.5" stroke-linecap="round"/>
+              <path d="M 236 186 Q 241 183 246 185" fill="none" stroke="hsl(25,30%,25%)" stroke-width="2.5" stroke-linecap="round"/>
+              <!-- Nose -->
+              <path d="M 231 198 Q 232 204 235 205 Q 238 204 239 198" fill="none" stroke="hsl(25,45%,52%)" stroke-width="1.8" stroke-linecap="round"/>
+              <!-- Mouth (determined/clenched) -->
+              <path d="M 224 210 Q 232 213 240 210" fill="none" stroke="hsl(25,30%,35%)" stroke-width="2" stroke-linecap="round"/>
+              <!-- Ear -->
+              <ellipse cx="207" cy="197" rx="6" ry="8" fill="hsl(25,50%,60%)"/>
+              <ellipse cx="257" cy="197" rx="6" ry="8" fill="hsl(25,50%,60%)"/>
+              <!-- Moustache -->
+              <path d="M 225 208 Q 232 206 239 208" fill="hsl(25,30%,28%)" stroke="none"/>
+
+              <!-- HARD HAT -->
+              <!-- Dome -->
+              <ellipse cx="232" cy="176" rx="32" ry="20" fill="hsl(40,70%,45%)"/>
+              <!-- Brim -->
+              <rect x="198" y="172" width="68" height="10" rx="5" fill="hsl(40,65%,40%)"/>
+              <!-- Hat highlight -->
+              <ellipse cx="224" cy="168" rx="12" ry="5" fill="hsla(40,80%,75%,0.35)"/>
+
+              <!-- ── SPEECH BUBBLE ── -->
+              <g id="speech-bubble">
+                <!-- Bubble shape -->
+                <rect x="100" y="118" width="104" height="46" rx="14" fill="white" stroke="hsl(30,25%,85%)" stroke-width="2"/>
+                <!-- Tail pointer -->
+                <polygon points="178,162  192,172  168,166" fill="white"/>
+                <line x1="177" y1="163" x2="191" y2="172" stroke="hsl(30,25%,85%)" stroke-width="2"/>
+                <!-- Bubble text (updated by JS via id) -->
+                <text id="bubble-line1" x="152" y="139"
+                  text-anchor="middle"
+                  font-family="'Hind Siliguri','Lato',sans-serif"
+                  font-size="12.5" font-weight="700"
+                  fill="hsl(25,45%,25%)">মেরামত</text>
+                <text id="bubble-line2" x="152" y="157"
+                  text-anchor="middle"
+                  font-family="'Hind Siliguri','Lato',sans-serif"
+                  font-size="12.5" font-weight="700"
+                  fill="hsl(25,45%,25%)">চলছে! 🔨</text>
+              </g>
+
+            </g><!-- end scene-floater -->
+
+            <!-- ── WOOD CHIPS (animated, near impact on "0") ── -->
+            <!-- These are at the left-base of the "0" ~(310, 252) -->
+            <rect id="chip-a" x="305" y="246" width="9" height="5" rx="2"
+              fill="hsl(30,55%,48%)" transform="rotate(20,310,249)"/>
+            <rect id="chip-b" x="314" y="240" width="7" height="4" rx="1.5"
+              fill="hsl(35,60%,42%)" transform="rotate(-15,318,242)"/>
+            <ellipse id="chip-c" cx="320" cy="255" rx="5" ry="3"
+              fill="hsl(28,50%,52%)"/>
+            <rect id="chip-d" x="308" y="258" width="8" height="3" rx="1.5"
+              fill="hsl(32,55%,44%)" transform="rotate(30,312,260)"/>
+            <circle id="chip-e" cx="318" cy="244" r="3.5"
+              fill="hsl(40,60%,55%)"/>
+
+            <!-- Spark asterisk at impact -->
+            <g id="spark">
+              <line x1="314" y1="250" x2="314" y2="260" stroke="hsl(40,90%,60%)" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="309" y1="252" x2="319" y2="258" stroke="hsl(40,90%,60%)" stroke-width="2.5" stroke-linecap="round"/>
+              <line x1="309" y1="258" x2="319" y2="252" stroke="hsl(40,90%,60%)" stroke-width="2.5" stroke-linecap="round"/>
+            </g>
+
+            <!-- Floating dust motes near the "0" base -->
+            <circle class="dust"  cx="290" cy="280" r="2.5" fill="hsl(30,40%,68%)" opacity="0.5"/>
+            <circle class="dust2" cx="302" cy="274" r="2"   fill="hsl(35,45%,62%)" opacity="0.45"/>
+            <circle class="dust3" cx="278" cy="271" r="1.8" fill="hsl(28,38%,72%)" opacity="0.4"/>
+
+            <!-- Small debris pile on floor under "0" -->
+            <ellipse cx="320" cy="294" rx="22" ry="3.5" fill="hsl(30,40%,68%)" opacity="0.35"/>
+            <ellipse cx="308" cy="295" rx="10" ry="2.5" fill="hsl(30,40%,65%)" opacity="0.3"/>
+
+          </svg>
+        </div>
+        <!-- /scene-wrap -->
+
+        <h1 class="p404-title" data-i18n="e404Title">
+          এই পৃষ্ঠাটি মেরামত করা হচ্ছে!
+        </h1>
+        <p class="p404-desc" data-i18n="e404Desc">
+          আপনি যে পৃষ্ঠাটি খুঁজছেন সেটি সরানো হয়েছে অথবা আর নেই। আমাদের কারিগর এটি ঠিক করার চেষ্টা করছে — আপাতত হোমপেজে ফিরে যান।
+        </p>
+        <div class="p404-actions">
+          <a href="index.html" class="p404-btn-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span data-i18n="e404Home">হোমপেজে যান</span>
+          </a>
+          <a href="index.html#contact" class="p404-btn-outline">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span data-i18n="e404Contact">যোগাযোগ করুন</span>
+          </a>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- ===== FOOTER (identical to main site) ===== -->
+    <footer>
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <p data-i18n="footerDesc">পেশাদার ফার্নিচার মেরামত ও পুনরুদ্ধার সেবা — বিশেষজ্ঞ কারিগরিতে আপনার প্রিয় জিনিসে নতুন জীবন।</p>
+          </div>
+          <div class="footer-col">
+            <h5 data-i18n="footerLinksTitle">দ্রুত লিঙ্ক</h5>
+            <ul>
+              <li><a href="index.html#services"     data-i18n="navServices">সেবাসমূহ</a></li>
+              <li><a href="index.html#about"        data-i18n="navAbout">আমাদের সম্পর্কে</a></li>
+              <li><a href="index.html#why-us"       data-i18n="navWhy">কেন আমরা</a></li>
+              <li><a href="index.html#testimonials" data-i18n="navTest">গ্রাহক মতামত</a></li>
+              <li><a href="index.html#faq"          data-i18n="navFaq">সচরাচর জিজ্ঞাসা</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h5 data-i18n="footerContactTitle">যোগাযোগ</h5>
+            <ul>
+              <li><span>WhatsApp: +880 171 772 2535</span></li>
+              <li><span>Phone: +880 171 772 2535</span></li>
+              <li><span>Email: hello@furnifix.com</span></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; <span id="year"></span> Furni Fix. <span data-i18n="footerRights">সর্বস্বত্ব সংরক্ষিত।</span></p>
+          <p data-i18n="footerTagline">নিখুঁতভাবে ডিজাইন করা হয়েছে।</p>
+        </div>
+      </div>
+    </footer>
+
+  </div><!-- /p404-wrapper -->
+
+  <script>
+  (function () {
+    /* ── Year ── */
+    const yr = document.getElementById('year');
+    if (yr) yr.textContent = new Date().getFullYear();
+
+    /* ── Navbar scroll ── */
+    const navbar = document.getElementById('navbar');
+    function onScroll() { navbar && navbar.classList.toggle('scrolled', window.scrollY > 40); }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    /* ── Hamburger ── */
+    const hamburger   = document.getElementById('hamburger');
+    const mobileMenu  = document.getElementById('mobile-menu');
+    const mobileClose = document.getElementById('mobile-close');
+    function openMenu()  { mobileMenu.classList.add('open'); hamburger.classList.add('open'); hamburger.setAttribute('aria-expanded','true'); document.body.style.overflow='hidden'; }
+    function closeMenu() { mobileMenu.classList.remove('open'); hamburger.classList.remove('open'); hamburger.setAttribute('aria-expanded','false'); document.body.style.overflow=''; }
+    if (hamburger)   hamburger.addEventListener('click', () => mobileMenu.classList.contains('open') ? closeMenu() : openMenu());
+    if (mobileClose) mobileClose.addEventListener('click', closeMenu);
+    document.querySelectorAll('.mobile-link').forEach(l => l.addEventListener('click', closeMenu));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+
+    /* ── Language toggle ── */
+    const translations = {
+      en: {
+        navServices:'Services', navAbout:'About Us', navWhy:'Why Us',
+        navTest:'Testimonials', navFaq:'FAQ', ctaBtn:'Free Quote',
+        footerLinksTitle:'Quick Links', footerContactTitle:'Contact',
+        footerDesc:'Professional furniture repair & restoration — giving your beloved pieces a new life with expert craftsmanship.',
+        footerRights:'All rights reserved.', footerTagline:'Crafted with precision.',
+        e404Label:'Under Repair',
+        e404Title:'This page is getting fixed!',
+        e404Desc:'The page you\'re looking for has been moved or no longer exists. Our craftsman is on it — head back to the homepage for now.',
+        e404Home:'Go to Homepage', e404Contact:'Contact Us',
+        bubbleLine1:'Fixing', bubbleLine2:'it! 🔨',
+      },
+      bn: {
+        navServices:'সেবাসমূহ', navAbout:'আমাদের সম্পর্কে', navWhy:'কেন আমরা',
+        navTest:'গ্রাহক মতামত', navFaq:'সচরাচর জিজ্ঞাসা', ctaBtn:'বিনামূল্যে কোটেশন',
+        footerLinksTitle:'দ্রুত লিঙ্ক', footerContactTitle:'যোগাযোগ',
+        footerDesc:'পেশাদার ফার্নিচার মেরামত ও পুনরুদ্ধার সেবা — বিশেষজ্ঞ কারিগরিতে আপনার প্রিয় জিনিসে নতুন জীবন।',
+        footerRights:'সর্বস্বত্ব সংরক্ষিত।', footerTagline:'নিখুঁতভাবে ডিজাইন করা হয়েছে।',
+        e404Label:'মেরামত চলছে',
+        e404Title:'এই পৃষ্ঠাটি মেরামত করা হচ্ছে!',
+        e404Desc:'আপনি যে পৃষ্ঠাটি খুঁজছেন সেটি সরানো হয়েছে অথবা আর নেই। আমাদের কারিগর এটি ঠিক করার চেষ্টা করছে — আপাতত হোমপেজে ফিরে যান।',
+        e404Home:'হোমপেজে যান', e404Contact:'যোগাযোগ করুন',
+        bubbleLine1:'মেরামত', bubbleLine2:'চলছে! 🔨',
+      }
+    };
+
+    let lang = localStorage.getItem('furnifix-lang') || 'bn';
+
+    function applyLang(l) {
+      document.documentElement.lang = l;
+      document.body.classList.toggle('lang-bn', l === 'bn');
+      const t = translations[l];
+      /* HTML elements */
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const k = el.getAttribute('data-i18n');
+        if (t[k] !== undefined) el.innerHTML = t[k];
+      });
+      /* SVG bubble text */
+      const bl1 = document.getElementById('bubble-line1');
+      const bl2 = document.getElementById('bubble-line2');
+      if (bl1) bl1.textContent = t.bubbleLine1;
+      if (bl2) bl2.textContent = t.bubbleLine2;
+      /* Update SVG bubble font */
+      const bubbleFont = l === 'bn' ? "'Hind Siliguri','Lato',sans-serif" : "'Lato',sans-serif";
+      if (bl1) bl1.setAttribute('font-family', bubbleFont);
+      if (bl2) bl2.setAttribute('font-family', bubbleFont);
+      /* Toggle button labels */
+      const label = l === 'bn' ? 'English' : 'বাংলা';
+      const dt = document.querySelector('.lang-toggle-text');
+      const dm = document.querySelector('.lang-toggle-text-mobile');
+      if (dt) dt.textContent = label;
+      if (dm) dm.textContent = label;
+    }
+
+    function toggleLang() {
+      lang = lang === 'bn' ? 'en' : 'bn';
+      localStorage.setItem('furnifix-lang', lang);
+      applyLang(lang);
+    }
+
+    applyLang(lang);
+
+    const btnD = document.getElementById('lang-toggle');
+    const btnM = document.getElementById('lang-toggle-mobile');
+    if (btnD) btnD.addEventListener('click', toggleLang);
+    if (btnM) btnM.addEventListener('click', () => { toggleLang(); closeMenu(); });
+  })();
+  </script>
+</body>
+</html>
