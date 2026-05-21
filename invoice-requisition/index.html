@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Invoice & Requisition Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  </head>
+  <body>
+
+    <!-- App Header -->
+    <header class="app-header">
+      <div class="header-inner">
+        <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()" title="Toggle input panel">
+          <svg id="toggle-icon" width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <rect x="1" y="1" width="16" height="16" rx="3" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M6 1v16" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M3.5 6.5L5 9l-1.5 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <div class="logo">
+          <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
+            <rect width="28" height="28" rx="6" fill="#4F46E5"/>
+            <path d="M7 8h14M7 12h10M7 16h12M7 20h8" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <span>DocForge</span>
+        </div>
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="invoice" onclick="switchTab('invoice')">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 2h10a1 1 0 011 1v10a1 1 0 01-1 1H3a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.4"/><path d="M5 6h6M5 8.5h4M5 11h5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            Invoice
+          </button>
+          <button class="tab-btn" data-tab="requisition" onclick="switchTab('requisition')">
+            <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 2h10a1 1 0 011 1v10a1 1 0 01-1 1H3a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.4"/><path d="M5 5.5h6M5 8h6M5 10.5h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            Requisition
+          </button>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-outline" onclick="resetForm()">
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 7a5 5 0 1010 0 5 5 0 00-10 0z" stroke="currentColor" stroke-width="1.4"/><path d="M7 4v3l2 1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+            Reset
+          </button>
+          <button class="btn btn-primary" onclick="downloadPDF()">
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M7 1v8M4 6l3 3 3-3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 10v1a1 1 0 001 1h8a1 1 0 001-1v-1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+            PDF
+          </button>
+          <button class="btn btn-secondary" onclick="downloadJPG()">
+            <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><rect x="1" y="2" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><circle cx="4.5" cy="5.5" r="1" stroke="currentColor" stroke-width="1.2"/><path d="M1 9l3-3 2.5 2.5L9 6l4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            JPG
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="app-main" id="app-main">
+
+      <!-- ====== INVOICE FORM ====== -->
+      <aside class="form-panel" id="invoice-form">
+        <div class="form-scroll">
+
+          <section class="form-section">
+            <h3 class="section-title">From (Your Business)</h3>
+            <div class="field-group">
+              <label>Company Name</label>
+              <input type="text" id="inv-from-name" placeholder="Furni Fix" oninput="updatePreview()">
+            </div>
+            <div class="field-row">
+              <div class="field-group">
+                <label>Email</label>
+                <input type="email" id="inv-from-email" placeholder="furnifixbd@gmail.com" oninput="updatePreview()">
+              </div>
+              <div class="field-group">
+                <label>Phone</label>
+                <input type="tel" id="inv-from-phone" placeholder="01717-722535" oninput="updatePreview()">
+              </div>
+            </div>
+            <div class="field-group">
+              <label>Website</label>
+              <input type="text" id="inv-from-website" placeholder="furnifix.github.io" oninput="updatePreview()">
+            </div>
+            <div class="field-group">
+              <label>Address</label>
+              <textarea id="inv-from-address" rows="2" placeholder="ZIRANI, BKSP, ASHULIA, SAVAR, DHAKA" oninput="updatePreview()"></textarea>
+            </div>
+          </section>
+
+          <section class="form-section">
+            <h3 class="section-title">Bill To</h3>
+            <div class="field-group">
+              <label>Client / Company Name</label>
+              <input type="text" id="inv-to-name" placeholder="Client Corp" oninput="updatePreview()">
+            </div>
+            <div class="field-group">
+              <label>Email</label>
+              <input type="email" id="inv-to-email" placeholder="billing@client.com" oninput="updatePreview()">
+            </div>
+            <div class="field-group">
+              <label>Address</label>
+              <textarea id="inv-to-address" rows="2" placeholder="Client address" oninput="updatePreview()"></textarea>
+            </div>
+          </section>
+
+          <section class="form-section">
+            <h3 class="section-title">Invoice Details</h3>
+            <div class="field-row">
+              <div class="field-group">
+                <label>Invoice #</label>
+                <input type="text" id="inv-number" placeholder="INV-001" oninput="updatePreview()">
+              </div>
+              <div class="field-group">
+                <label>Currency</label>
+                <select id="inv-currency" onchange="updatePreview()">
+                  <option value="৳" selected>BDT (৳)</option>
+                  <option value="$">USD ($)</option>
+                  <option value="₹">INR (₹)</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field-group">
+                <label>Issue Date</label>
+                <input type="date" id="inv-date" oninput="updatePreview()">
+              </div>
+              <div class="field-group">
+                <label>Due Date</label>
+                <input type="date" id="inv-due-date" oninput="updatePreview()">
+              </div>
+            </div>
+          </section>
+
+          <section class="form-section">
+            <h3 class="section-title">Line Items</h3>
+            <div id="inv-items"></div>
+            <button class="add-item-btn" onclick="addInvoiceItem()">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              Add Line Item
+            </button>
+          </section>
+
+          <section class="form-section">
+            <h3 class="section-title">Totals & Notes</h3>
+            <div class="field-row">
+              <div class="field-group">
+                <label>Tax Rate (%)</label>
+                <input type="number" id="inv-tax" placeholder="0" min="0" max="100" step="0.5" oninput="updatePreview()">
+              </div>
+              <div class="field-group">
+                <label>Discount (%)</label>
+                <input type="number" id="inv-discount" placeholder="0" min="0" max="100" step="0.5" oninput="updatePreview()">
+              </div>
+            </div>
+            <div class="field-group">
+              <label>Payment Terms</label>
+              <input type="text" id="inv-terms" placeholder="Net 30 days" oninput="updatePreview()">
+            </div>
+            <div class="field-group">
+              <label>Notes / Message</label>
+              <textarea id="inv-notes" rows="3" placeholder="Thank you for your business!" oninput="updatePreview()"></textarea>
+            </div>
+            <div class="field-group">
+              <label>Accent Color</label>
+              <div class="color-row">
+                <input type="color" id="inv-color" value="#E11D27" oninput="updatePreview()">
+                <span id="inv-color-label">#E11D27</span>
+              </div>
+            </div>
+            <div class="toggle-row">
+              <span class="toggle-label">Show Signatures</span>
+              <button class="sig-toggle active" id="inv-sig-toggle" onclick="toggleSignatures('inv')" title="Toggle signature blocks">
+                <span class="toggle-thumb"></span>
+              </button>
+            </div>
+          </section>
+
+        </div>
+      </aside>
+
+      <!-- ====== REQUISITION FORM ====== -->
+      <aside class="form-panel hidden" id="requisition-form">
+        <div class="form-scroll">
+
+          <section class="form-section">
+            <h3 class="section-title">Organization</h3>
+            <div class="field-group">
+              <label>Company / Organization Name</label>
+              <input type="text" id="req-org" placeholder="Furni Fix" oninput="updatePreview()">
+            </div>
+            <div class="field-row">
+              <div class="field-group">
+                <label>Department</label>
+                <input type="text" id="req-dept" placeholder="Engineering" oninput="updatePreview()">
+              </div>
+              <div class="field-group">
+                <label>Phone</label>
+                <input type="tel" id="req-org-phone" placeholder="01717-722535" oninput="updatePreview()">
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field-group">
+                <label>Email</label>
+                <input type="email" id="req-org-email" placeholder="furnifixbd@gmail.com" oninput="updatePreview()">
+              </div>
+              <div class="field-group">
+                <label>Website</label>
+                <input type="text" id="req-org-website" placeholder="furnifix.github.io" oninput="updatePreview()">
+              </div>
+            </div>
+            <div class="field-group">
+              <label>Address</label>
+              <textarea id="req-org-address" rows="2" placeholder="ZIRANI, BKSP, ASHULIA, SAVAR, DHAKA" oninput="updatePreview()"></textarea>
+            </div>
+          </section>
+
+          <section class="form-section">
+            <h3 class="section-title">Requester Info</h3>
+            <div class="field-row">
+              <div class="field-group">
+                <label>Requester Name</label>
+                <input type="text" id="req-name" placeholder="Jane Smith" oninput="updatePreview()">
+              </div>
+              <div class="field-group">
+                <label>Employee ID</label>
+                <input type="text" id="req-emp-id" placeholder="EMP-001" oninput="updatePreview()">
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field-group">
+                <label>Email</label>
+                <input type="email" id="req-email" placeholder="jane@furnifix.com" oninput="updatePreview()">
+              </div>
+              <div class="field-group">
+                <label>Phone</label>
+                <input type="tel" id="req-phone" placeholder="+880 1700 000000" oninput="updatePreview()">
+              </div>
+            </div>
+          </section>
+
+          <section class="form-section">
+            <h3 class="section-title">Requisition Details</h3>
+            <div class="field-row">
+              <div class="field-group">
+                <label>Requisition #</label>
+                <input type="text" id="req-number" placeholder="REQ-001" oninput="updatePreview()">
+              </div>
+              <div class="field-group">
+                <label>Priority</label>
+                <select id="req-priority" onchange="updatePreview()">
+                  <option value="Normal">Normal</option>
+                  <option value="High">High</option>
+                  <option value="Urgent">Urgent</option>
+                  <option value="Low">Low</option>
+                </select>
+              </div>
+            </div>
+            <div class="field-row">
+              <div class="field-group">
+                <label>Request Date</label>
+                <input type="date" id="req-date" oninput="updatePreview()">
+              </div>
+              <div class="field-group">
+                <label>Required By</label>
+                <input type="date" id="req-required-by" oninput="updatePreview()">
+              </div>
+            </div>
+            <div class="field-group">
+              <label>Purpose / Justification</label>
+              <textarea id="req-purpose" rows="2" placeholder="Describe why these items are needed..." oninput="updatePreview()"></textarea>
+            </div>
+          </section>
+
+          <section class="form-section">
+            <h3 class="section-title">Requested Items</h3>
+            <div id="req-items"></div>
+            <button class="add-item-btn" onclick="addRequisitionItem()">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              Add Item
+            </button>
+          </section>
+
+          <section class="form-section">
+            <h3 class="section-title">Approval & Notes</h3>
+            <div class="field-row">
+              <div class="field-group">
+                <label>Currency</label>
+                <select id="req-currency" onchange="updatePreview()">
+                  <option value="৳" selected>BDT (৳)</option>
+                  <option value="$">USD ($)</option>
+                  <option value="₹">INR (₹)</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label>Budget Code</label>
+                <input type="text" id="req-budget-code" placeholder="CAPEX-2026" oninput="updatePreview()">
+              </div>
+            </div>
+            <div class="field-group">
+              <label>Preferred Vendor / Supplier</label>
+              <input type="text" id="req-vendor" placeholder="Optional — e.g. Amazon Business" oninput="updatePreview()">
+            </div>
+            <div class="field-group">
+              <label>Additional Notes</label>
+              <textarea id="req-notes" rows="3" placeholder="Any special instructions or delivery requirements..." oninput="updatePreview()"></textarea>
+            </div>
+            <div class="field-group">
+              <label>Accent Color</label>
+              <div class="color-row">
+                <input type="color" id="req-color" value="#E11D27" oninput="updatePreview()">
+                <span id="req-color-label">#E11D27</span>
+              </div>
+            </div>
+            <div class="toggle-row">
+              <span class="toggle-label">Show Signatures</span>
+              <button class="sig-toggle active" id="req-sig-toggle" onclick="toggleSignatures('req')" title="Toggle signature blocks">
+                <span class="toggle-thumb"></span>
+              </button>
+            </div>
+            <div class="toggle-row">
+              <span class="toggle-label">Show Amounts</span>
+              <button class="sig-toggle active" id="req-amt-toggle" onclick="toggleReqAmounts()" title="Toggle amount visibility">
+                <span class="toggle-thumb"></span>
+              </button>
+            </div>
+          </section>
+
+        </div>
+      </aside>
+
+      <!-- ====== PREVIEW PANEL ====== -->
+      <section class="preview-panel">
+        <div class="preview-toolbar">
+          <span class="preview-label">Live Preview — A4</span>
+          <div class="preview-actions">
+            <button class="btn btn-sm btn-primary" onclick="downloadPDF()">
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M7 1v8M4 6l3 3 3-3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M2 10v1a1 1 0 001 1h8a1 1 0 001-1v-1" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Download PDF
+            </button>
+            <button class="btn btn-sm btn-secondary" onclick="downloadJPG()">
+              <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><rect x="1" y="2" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><circle cx="4.5" cy="5.5" r="1" stroke="currentColor" stroke-width="1.2"/><path d="M1 9l3-3 2.5 2.5L9 6l4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Download JPG
+            </button>
+          </div>
+        </div>
+        <div class="preview-scroll">
+          <div class="preview-wrapper">
+            <div id="invoice-preview"></div>
+            <div id="requisition-preview" class="hidden"></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <div id="toast" class="toast"></div>
+    <script src="script.js"></script>
+  </body>
+</html>
