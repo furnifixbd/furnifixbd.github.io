@@ -4,7 +4,7 @@ let invoiceItemCount = 0;
 let requisitionItemCount = 0;
 
 /* ===== Logo — change only this constant (or swap logo.png) to update the logo ===== */
-const LOGO_SRC = "logo.svg";
+const LOGO_SRC = "logo.png";
 
 /* ===== Init ===== */
 document.addEventListener("DOMContentLoaded", () => {
